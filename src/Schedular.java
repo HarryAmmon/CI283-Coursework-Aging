@@ -12,8 +12,8 @@ public class Schedular {
 		highPriority = new ArrayList<Process>();
 	}
 	/**
-	 * Will add Process e to to correct queue based on its priority
-	 * @param e
+	 * Will add Process pr to to correct queue based on its priority
+	 * @param pr
 	 */
 	public void addToQueue(Process pr) {
 		if (pr.getPriority() <= 42) {highPriority.add(pr);}
