@@ -15,18 +15,14 @@ public class Schedular {
 	 * Will add Process e to to correct queue based on its priority
 	 * @param e
 	 */
-	public void addToQueue(Process e) {
-		switch(e.getPriority()) {
-		case 1:
-			highPriority.add(e);
-			break;
-		case 2:
-			mediumPriority.add(e);
-			break;
-		case 3:
-			lowPriority.add(e);
-			break;
-			}
+	public void addToQueue(Process pr) {
+		if (pr.getPriority() <= 42) {highPriority.add(pr);}
+		else if (pr.getPriority() > 42 && pr.getPriority() <= 82) {mediumPriority.add(pr);}
+		else if (pr.getPriority() > 82) {lowPriority.add(pr);}
+		else {
+			System.out.println("UNABLE TO ADD TO QUEUE");
+			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d| Priority: %3d%n",pr.getPid(),pr.getArrivalTime(),pr.getBurstTime(),pr.getPriority());
+		}
 	}
 	
 	/**
