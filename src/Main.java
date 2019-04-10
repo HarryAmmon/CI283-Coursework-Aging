@@ -14,21 +14,8 @@ public class Main {
 		long endTime   = System.nanoTime();
 		long totalTime = endTime - startTime;
 		System.out.printf("Calculated in %d milleseconds%n",totalTime/1000000);
-		
-		
-		
-		
-		
-		/*schedular.sortQueue(1);
-		schedular.sortQueue(2);
-		schedular.sortQueue(3);
-		System.out.println("Queues sorted");
-		schedular.start();
-		long endTime   = System.nanoTime();
-		long totalTime = endTime - startTime;
-		
-		System.out.printf("Calculated in %d milleseconds%n",totalTime/1000000);*/
 	}
+	
 	/**
 	 * For each line in CSV file
 	 * 	* Read line and store in variable line
