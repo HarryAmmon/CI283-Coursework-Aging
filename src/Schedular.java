@@ -2,20 +2,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Schedular {
+	private ArrayList<Process> staged;
 	private ArrayList<Process> lowPriority; 
 	private ArrayList<Process> mediumPriority; 
 	private ArrayList<Process> highPriority;
 	
 	Schedular(){
+		staged = new ArrayList<Process>();
 		lowPriority = new ArrayList<Process>();
 		mediumPriority = new ArrayList<Process>();
 		highPriority = new ArrayList<Process>();
 	}
+	
+	public void stage(Process pr) {
+		staged.add(pr);
+	}
+	
 	/**
 	 * Will add Process pr to to correct queue based on its priority
 	 * @param pr
 	 */
-	public void addToQueue(Process pr) {
+	private void addToQueue(Process pr) {
 		if (pr.getPriority() <= 42) {highPriority.add(pr);}
 		else if (pr.getPriority() > 42 && pr.getPriority() <= 82) {mediumPriority.add(pr);}
 		else if (pr.getPriority() > 82) {lowPriority.add(pr);}
@@ -48,6 +55,10 @@ public class Schedular {
 	 * Mainly for testing and demonstration purposes
 	 */
 	public void showAllQueues() {
+		System.out.println("These processes are staged");
+		for (int j = 0;j<staged.size();j++) {
+			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d| Priority: %1d%n",staged.get(j).getPid(),staged.get(j).getArrivalTime(),staged.get(j).getBurstTime(),staged.get(j).getPriority());
+		}
 		System.out.println("These are high priority processes");
 		for (int j = 0;j<highPriority.size();j++) {
 			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d| Priority: %1d%n",highPriority.get(j).getPid(),highPriority.get(j).getArrivalTime(),highPriority.get(j).getBurstTime(),highPriority.get(j).getPriority());
@@ -61,15 +72,24 @@ public class Schedular {
 			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d |Priority: %1d%n",lowPriority.get(l).getPid(),lowPriority.get(l).getArrivalTime(),lowPriority.get(l).getBurstTime(),lowPriority.get(l).getPriority());
 		}
 	}
+	private boolean updateQueues(int sClock) {
+		if(staged.isEmpty()) {return false;}
+		while(staged.get(0).getArrivalTime() <= sClock) {
+			addToQueue(staged.get(0));
+			staged.remove(0);
+			if(staged.isEmpty()) {return false;}
+		}
+		return true;
+	}
 	
 	public void start() {
+		Collections.sort(staged);
+		//showAllQueues(); // TESTING
 		System.out.println("**********************EXECUTION ORDER**********************");
-		int systemClock = 0; // Simulates a clock that the system uses so processes are run when they "arrive"
-		int executed = 0;
-		int high = 0; //REMOVE
-		int med = 0; //REMOVE
-		int low = 0; //REMOVE
+		// Simulates a clock that the system uses so processes are run when they "arrive"
+		int systemClock = 0, executed = 0 ,high = 0, med = 0,low = 0;
 		while(true) {
+				updateQueues(systemClock);
 					// If the queue isn't empty and the next process has the arrival time of the System clock
 				if (highPriority.size() != 0 && highPriority.get(0).getArrivalTime() <= systemClock) {
 					highPriority.get(0).execute(systemClock);
@@ -92,9 +112,9 @@ public class Schedular {
 					executed++;
 					low++; //REMOVE
 					}
-				else if(highPriority.isEmpty() && mediumPriority.isEmpty() && lowPriority.isEmpty()){ // If all queues are empty then there are no more processes to execute so program can stop
-					System.out.println("All queues are empty");
-					System.out.printf("%4d process have been executed%n",executed);
+				else if(highPriority.isEmpty() && mediumPriority.isEmpty() && lowPriority.isEmpty() && staged.isEmpty()){ // If all queues are empty then there are no more processes to execute so program can stop
+					System.out.printf("All queues are empty. %4d process have been executed.%n",executed);
+					System.out.printf("The system would take %5d seconds to execute these processes", systemClock);
 					System.out.printf("High: %3d|Med: %3d|Low %3d%n",high,med,low);
 					break;
 					}
