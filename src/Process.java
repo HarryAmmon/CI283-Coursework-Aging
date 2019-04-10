@@ -42,6 +42,10 @@ public class Process implements Comparable<Process>{
 	
 	public void age() {
 		this.waitTime++;
+		if (this.waitTime % 20 == 0 && this.priority > 0) {
+			this.priority--;
+			//System.out.printf("PRIORITY DECREASED FOR PID: %4d%n", this.pid); //REMOVE
+		}
 	}
 	@Override
 	public int compareTo(Process comparePr) {
