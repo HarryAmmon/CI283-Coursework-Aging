@@ -90,6 +90,15 @@ public class Schedular {
 		int systemClock = 0, executed = 0 ,high = 0, med = 0,low = 0;
 		while(true) {
 				updateQueues(systemClock);
+				for(int i = 0;i<highPriority.size();i++) {
+					highPriority.get(i).age();
+				}
+				for(int i = 0;i<mediumPriority.size();i++) {
+					mediumPriority.get(i).age();
+				}
+				for(int i = 0;i<lowPriority.size();i++) {
+					lowPriority.get(i).age();
+				}
 					// If the queue isn't empty and the next process has the arrival time of the System clock
 				if (highPriority.size() != 0 && highPriority.get(0).getArrivalTime() <= systemClock) {
 					highPriority.get(0).execute(systemClock);

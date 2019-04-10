@@ -15,7 +15,7 @@ public class Process implements Comparable<Process>{
 		this.executionTime = 0;
 		this.waitTime = 0;
 	}
-
+	
 	public int getPid() {
 		return this.pid;
 	}
@@ -40,6 +40,9 @@ public class Process implements Comparable<Process>{
 		return this.executionTime;
 	}
 	
+	public void age() {
+		this.waitTime++;
+	}
 	@Override
 	public int compareTo(Process comparePr) {
 		int compareArrivalTime = comparePr.getArrivalTime();
@@ -48,8 +51,7 @@ public class Process implements Comparable<Process>{
 	
 	public void execute(int systemTime){
 		this.executionTime = systemTime;
-		this.waitTime = executionTime - arrivalTime;
-		System.out.printf("PID: %4d | ArrivalTime: %4d | ExecutionTime: %6d | WaitTime: %5d | BurstTime: %4d | Priority: %2d%n", this.pid,this.arrivalTime,this.executionTime,this.waitTime,this.burstTime,this.priority);
+		System.out.printf("PID: %4d | ArrivalTime: %5d | ExecutionTime: %6d | WaitTime: %5d | BurstTime: %4d | Priority: %2d%n", this.pid,this.arrivalTime,this.executionTime,this.waitTime,this.burstTime,this.priority);
 	}
 	
 
