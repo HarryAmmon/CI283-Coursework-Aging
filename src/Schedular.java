@@ -23,12 +23,19 @@ public class Schedular {
 	 * @param pr
 	 */
 	private void addToQueue(Process pr) {
-		if (pr.getPriority() <= 42) {highPriority.add(pr);}
-		else if (pr.getPriority() > 42 && pr.getPriority() <= 82) {mediumPriority.add(pr);}
-		else if (pr.getPriority() > 82) {lowPriority.add(pr);}
-		else {
-			System.out.println("UNABLE TO ADD TO QUEUE");
-			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d| Priority: %3d%n",pr.getPid(),pr.getArrivalTime(),pr.getBurstTime(),pr.getPriority());
+		switch(pr.getOriginalQueue()) {
+		case 1:
+			pr.setCurrentQueue(1);
+			highPriority.add(pr);
+			break;
+		case 2:
+			pr.setCurrentQueue(2);
+			mediumPriority.add(pr);
+			break;
+		case 3: 
+			pr.setCurrentQueue(3);
+			lowPriority.add(pr);
+			break;
 		}
 	}
 	
@@ -72,14 +79,40 @@ public class Schedular {
 			System.out.printf("PID: %4d| ArrivalTime: %4d| BurnTime: %3d |Priority: %1d%n",lowPriority.get(l).getPid(),lowPriority.get(l).getArrivalTime(),lowPriority.get(l).getBurstTime(),lowPriority.get(l).getPriority());
 		}
 	}
-	private boolean updateQueues(int sClock) {
-		if(staged.isEmpty()) {return false;}
+	private boolean loadProcesses(int sClock) {
+		if(staged.isEmpty()) {
+			return false;
+		}
 		while(staged.get(0).getArrivalTime() <= sClock) {
 			addToQueue(staged.get(0));
 			staged.remove(0);
-			if(staged.isEmpty()) {return false;}
+			if(staged.isEmpty()) {
+				return false;
+				}
 		}
 		return true;
+	}
+	
+	private void ageAndUpdate() {
+		for(int i = 0;i<highPriority.size();i++) {
+			highPriority.get(i).age();
+		}
+		for(int i = 0;i<mediumPriority.size();i++) {
+			if(mediumPriority.get(i).age()) {
+				Process temp = mediumPriority.remove(i);
+				temp.setCurrentQueue(1);
+				highPriority.add(temp);
+				Collections.sort(highPriority);
+			}
+		}
+		for(int i = 0;i<lowPriority.size();i++) {
+			if(lowPriority.get(i).age()) {
+				Process temp = lowPriority.remove(i);
+				temp.setCurrentQueue(2);
+				mediumPriority.add(temp);
+				Collections.sort(mediumPriority);
+			}
+		}
 	}
 	
 	public void start() {
@@ -89,33 +122,24 @@ public class Schedular {
 		// Simulates a clock that the system uses so processes are run when they "arrive"
 		int systemClock = 0, executed = 0 ,high = 0, med = 0,low = 0;
 		while(true) {
-				updateQueues(systemClock);
-				for(int i = 0;i<highPriority.size();i++) {
-					highPriority.get(i).age();
-				}
-				for(int i = 0;i<mediumPriority.size();i++) {
-					mediumPriority.get(i).age();
-				}
-				for(int i = 0;i<lowPriority.size();i++) {
-					lowPriority.get(i).age();
-				}
+				loadProcesses(systemClock);
 					// If the queue isn't empty and the next process has the arrival time of the System clock
 				if (highPriority.size() != 0 && highPriority.get(0).getArrivalTime() <= systemClock) {
-					highPriority.get(0).execute(systemClock);
+					highPriority.get(0).execute();
 					systemClock += highPriority.get(0).getBurstTime();
 					highPriority.remove(0);
 					executed++;
 					high++;//REMOVE
 					}
 				else if(mediumPriority.size() != 0 && mediumPriority.get(0).getArrivalTime() <= systemClock){
-					mediumPriority.get(0).execute(systemClock);
+					mediumPriority.get(0).execute();
 					systemClock += mediumPriority.get(0).getBurstTime();
 					mediumPriority.remove(0);
 					executed++;
 					med++; //REMOVE
 					}
 				else if(lowPriority.size() != 0 && lowPriority.get(0).getArrivalTime() <= systemClock) {
-					lowPriority.get(0).execute(systemClock);
+					lowPriority.get(0).execute();
 					systemClock += lowPriority.get(0).getBurstTime();
 					lowPriority.remove(0);
 					executed++;
@@ -128,6 +152,7 @@ public class Schedular {
 					break;
 					}
 				else {systemClock++;}
+				ageAndUpdate();
 				
 		
 			}
