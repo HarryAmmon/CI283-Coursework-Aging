@@ -7,12 +7,11 @@ import java.util.ArrayList;
 public class Main {
 	static Schedular schedular = new Schedular();
 	public static void main(String[] args) throws IOException {
-		readCSV("./processes.csv"); // Calls readCSV
-		//schedular.showAllQueues(); // Testing purposes
-		long startTime = System.nanoTime(); // Get the current time
-		schedular.start();
-		long endTime   = System.nanoTime();
-		long totalTime = endTime - startTime;
+		readCSV("./MOCK_DATA.csv"); 			// Calls readCSV
+		long startTime = System.nanoTime(); 	// Get the current time
+		schedular.start();						// Start the schedular
+		long endTime   = System.nanoTime();		// Get the current time
+		long totalTime = endTime - startTime;	// Calculate time taken in nanoseconds
 		System.out.printf("Calculated in %d milleseconds%n",totalTime/1000000);
 	}
 	

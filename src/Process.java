@@ -57,9 +57,11 @@ public class Process implements Comparable<Process>{
 		return this.intendedQueue;
 	}
 	
-	public boolean age() {
-		this.waitTime++;
-		if (this.waitTime % 20 == 0 && this.priority > 0) {
+	public boolean age(int sClock) {
+		int oldWaitTime = this.waitTime;
+		this.waitTime = sClock - this.arrivalTime;
+		
+		if (this.waitTime - oldWaitTime > 10 && this.priority > 0) {
 			this.priority--;
 			if(calculateQueue() != currentQueue) {
 				this.intendedQueue = calculateQueue();
@@ -82,8 +84,9 @@ public class Process implements Comparable<Process>{
 		return this.arrivalTime - compareArrivalTime;
 	}
 	
-	public void execute(){
-		System.out.printf("PID: %4d | ArrivalTime: %5d | WaitTime: %5d | BurstTime: %4d | Priority: %2d | OriginalQueue: %1d | CurrentQueue: %1d |%n", this.pid,this.arrivalTime,this.waitTime,this.burstTime,this.priority,this.originalQueue,this.currentQueue);
+	public void execute(int sClock){
+		this.waitTime = sClock - arrivalTime; // Update the length of time taken to execute
+		System.out.printf("%4d|%12d|%13d|%9d|%10d|%9d|%14d|%13d|%n", this.pid,this.arrivalTime,sClock,this.waitTime,this.burstTime,this.priority,this.originalQueue,this.currentQueue);
 	}
 	
 
