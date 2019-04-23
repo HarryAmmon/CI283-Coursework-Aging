@@ -95,67 +95,70 @@ public class Schedular {
 		}
 		return true;
 	}
-	
-	private void ageAndUpdate() {
+	int processChangedQueue=0; //Counter
+	private void updateProcesses(int sClock) {
+		
 		for(int i = 0;i<highPriority.size();i++) {
-			highPriority.get(i).age();
+			highPriority.get(i).age(sClock);
 		}
 		for(int i = 0;i<mediumPriority.size();i++) {
-			if(mediumPriority.get(i).age()) {
+			if(mediumPriority.get(i).age(sClock)) {
 				Process temp = mediumPriority.remove(i);
 				temp.setCurrentQueue(1);
 				highPriority.add(temp);
 				Collections.sort(highPriority);
+				processChangedQueue++;
 			}
 		}
 		for(int i = 0;i<lowPriority.size();i++) {
-			if(lowPriority.get(i).age()) {
+			if(lowPriority.get(i).age(sClock)) {
 				Process temp = lowPriority.remove(i);
 				temp.setCurrentQueue(2);
 				mediumPriority.add(temp);
 				Collections.sort(mediumPriority);
+				processChangedQueue++;
 			}
 		}
 	}
 	
 	public void start() {
-		Collections.sort(staged);
-		//showAllQueues(); // TESTING
-		System.out.println("**********************EXECUTION ORDER**********************");
-		// Simulates a clock that the system uses so processes are run when they "arrive"
-		int systemClock = 0, executed = 0 ,high = 0, med = 0,low = 0;
-		while(true) {
+		Collections.sort(staged); // Sort the staged arraylist so all processes are in ascending order based on arrival time
+		System.out.println("EXECUTION ORDER:");
+		System.out.println(" PID| ArrivalTime| ExecutedTime| WaitTime| BurstTime| Priority| OriginalQueue| CurrentQueue|");
+		// Lets initialise some variables. These are just counters for demonstration purposes
+		int systemClock = 0;
+		while(true) { // Could change this so its more descriptive 
 				loadProcesses(systemClock);
-					// If the queue isn't empty and the next process has the arrival time of the System clock
-				if (highPriority.size() != 0 && highPriority.get(0).getArrivalTime() <= systemClock) {
-					highPriority.get(0).execute();
+
+				if (highPriority.size() != 0 && highPriority.get(0).getArrivalTime() <= systemClock) { 					// If the queue isn't empty and the next process has the arrival time of the System clock or later
+					highPriority.get(0).execute(systemClock);
+					updateProcesses(systemClock);
 					systemClock += highPriority.get(0).getBurstTime();
 					highPriority.remove(0);
-					executed++;
-					high++;//REMOVE
 					}
+				
 				else if(mediumPriority.size() != 0 && mediumPriority.get(0).getArrivalTime() <= systemClock){
-					mediumPriority.get(0).execute();
+					mediumPriority.get(0).execute(systemClock);
+					updateProcesses(systemClock);
 					systemClock += mediumPriority.get(0).getBurstTime();
-					mediumPriority.remove(0);
-					executed++;
-					med++; //REMOVE
+					mediumPriority.remove(0);			
 					}
+				
 				else if(lowPriority.size() != 0 && lowPriority.get(0).getArrivalTime() <= systemClock) {
-					lowPriority.get(0).execute();
+					lowPriority.get(0).execute(systemClock);
+					updateProcesses(systemClock);
 					systemClock += lowPriority.get(0).getBurstTime();
-					lowPriority.remove(0);
-					executed++;
-					low++; //REMOVE
+					lowPriority.remove(0);		
 					}
 				else if(highPriority.isEmpty() && mediumPriority.isEmpty() && lowPriority.isEmpty() && staged.isEmpty()){ // If all queues are empty then there are no more processes to execute so program can stop
-					System.out.printf("All queues are empty. %4d process have been executed.%n",executed);
-					System.out.printf("The system would take %5d seconds to execute these processes", systemClock);
-					System.out.printf("High: %3d|Med: %3d|Low %3d%n",high,med,low);
+					System.out.println("All queues are empty. All process have been executed.");
+					//System.out.printf("The system would take %5d seconds to execute these processes.%n", systemClock);
+					//System.out.printf("High: %3d | Med: %3d | Low %3d%n",high,med,low);
+					System.out.printf("Processes changed queues %d times.%n ",processChangedQueue);
 					break;
 					}
 				else {systemClock++;}
-				ageAndUpdate();
+			
 				
 		
 			}
