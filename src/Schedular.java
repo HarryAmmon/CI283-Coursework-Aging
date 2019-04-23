@@ -13,7 +13,10 @@ public class Schedular {
 		mediumPriority = new ArrayList<Process>();
 		highPriority = new ArrayList<Process>();
 	}
-	
+	/**
+	 * Will add Process pr to an ArrayList of not yet executed processes
+	 * @param pr
+	 */
 	public void stage(Process pr) {
 		staged.add(pr);
 	}

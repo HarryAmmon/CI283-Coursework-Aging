@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Main {
 	static Schedular schedular = new Schedular();
 	public static void main(String[] args) throws IOException {
-		readCSV("./processes.csv"); // Calls readCSV
+		readCSV("./MOCK_DATA.csv"); // Calls readCSV
 		//schedular.showAllQueues(); // Testing purposes
 		long startTime = System.nanoTime(); // Get the current time
 		schedular.start();

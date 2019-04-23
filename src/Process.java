@@ -83,7 +83,7 @@ public class Process implements Comparable<Process>{
 	}
 	
 	public void execute(){
-		System.out.printf("PID: %4d | ArrivalTime: %5d | WaitTime: %5d | BurstTime: %4d | Priority: %2d | OriginalQueue: %1d | CurrentQueue: %1d |%n", this.pid,this.arrivalTime,this.waitTime,this.burstTime,this.priority,this.originalQueue,this.currentQueue);
+		System.out.printf("PID: %4d | ArrivalTime: %5d | WaitTime: %5d | BurstTime: %4d | Priority: %3d | OriginalQueue: %1d | CurrentQueue: %1d |%n", this.pid,this.arrivalTime,this.waitTime,this.burstTime,this.priority,this.originalQueue,this.currentQueue);
 	}
 	
 
